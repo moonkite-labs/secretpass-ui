@@ -3,12 +3,15 @@ import { lazy } from 'react';
 // project import
 import Loadable from 'components/Loadable';
 import MainLayout from 'layout/MainLayout';
-
+//
 // render - dashboard
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard')));
 
 // render - sample page
-const SamplePage = Loadable(lazy(() => import('pages/extra-pages/SamplePage')));
+const TextPage = Loadable(lazy(() => import('pages/extra-pages/TextPage')));
+const FilePage = Loadable(lazy(() => import('pages/extra-pages/FilePage')));
+const OneTimePassword = Loadable(lazy(() => import('pages/extra-pages/OneTimePassword')));
+const SecretMessage = Loadable(lazy(() => import('pages/extra-pages/SecretMessage')));
 
 // render - utilities
 const Typography = Loadable(lazy(() => import('pages/components-overview/Typography')));
@@ -23,7 +26,7 @@ const MainRoutes = {
   element: <MainLayout />,
   children: [
     {
-      path: '/',
+      path: '/default',
       element: <DashboardDefault />
     },
     {
@@ -41,7 +44,7 @@ const MainRoutes = {
     },
     {
       path: 'sample-page',
-      element: <SamplePage />
+      element: <TextPage />
     },
     {
       path: 'shadow',
@@ -54,6 +57,26 @@ const MainRoutes = {
     {
       path: 'icons/ant',
       element: <AntIcons />
+    },
+    {
+      path: '/',
+      element: <TextPage />
+    },
+    {
+      path: 'file',
+      element: <FilePage />
+    },
+    {
+      path: 'chat',
+      element: <TextPage />
+    },
+    {
+      path: 'otp',
+      element: <OneTimePassword />
+    },
+    {
+      path: 'secret-message',
+      element: <SecretMessage />
     }
   ]
 };
