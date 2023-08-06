@@ -1,7 +1,5 @@
 
-## Getting started
-
-Setup Project
+## Project Setup
 
 ```
 npm i
