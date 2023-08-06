@@ -64,7 +64,8 @@ const MainRoutes = {
     },
     {
       path: 'file',
-      element: <FilePage />
+      // element: <FilePage />
+      element: <TextPage />
     },
     {
       path: 'chat',
