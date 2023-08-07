@@ -13,7 +13,7 @@ const SecretMessage = () => (
         <OutlinedInput
           multiline
           rows={25}
-          rowsMin={100}
+          rowsmin={100}
           id="header-search"
           aria-describedby="header-search-text"
           inputProps={{
