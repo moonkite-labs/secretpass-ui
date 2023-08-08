@@ -9,7 +9,7 @@ const newMenu = {
       id: 'text',
       title: 'Text',
       type: 'item',
-      url: '/',
+      url: '/'
     },
     {
       id: 'file',

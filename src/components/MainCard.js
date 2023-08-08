@@ -3,10 +3,7 @@ import { forwardRef } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { Card, CardContent, CardHeader, Divider, Typography } from '@mui/material';
-
-// project import
-import Highlighter from './third-party/Highlighter';
+import { Card, CardContent, CardHeader, Typography } from '@mui/material';
 
 // header style
 const headerSX = {
@@ -30,7 +27,6 @@ const MainCard = forwardRef(
       shadow,
       sx = {},
       title,
-      codeHighlight,
       ...others
     },
     ref
@@ -69,16 +65,6 @@ const MainCard = forwardRef(
         {/* card content */}
         {content && <CardContent sx={contentSX}>{children}</CardContent>}
         {!content && children}
-
-        {/* card footer - clipboard & highlighter  */}
-        {codeHighlight && (
-          <>
-            <Divider sx={{ borderStyle: 'dashed' }} />
-            <Highlighter codeHighlight={codeHighlight} main>
-              {children}
-            </Highlighter>
-          </>
-        )}
       </Card>
     );
   }
