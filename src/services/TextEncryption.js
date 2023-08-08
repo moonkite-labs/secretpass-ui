@@ -1,5 +1,5 @@
-const { createMessage, readMessage, encrypt, decrypt } = require('openpgp');
-const { v4: uuidv4 } = require('uuid');
+const { createMessage, encrypt } = require('openpgp');
+require('uuid');
 const axios = require('axios');
 const CryptoJS = require('crypto-js');
 
