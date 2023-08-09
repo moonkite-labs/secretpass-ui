@@ -3,10 +3,9 @@ import { useState } from 'react';
 // material-ui
 import { FormControl, OutlinedInput, Button, Typography, Stack, RadioGroup, FormControlLabel, Radio, FormHelperText } from '@mui/material';
 
-
 import axios from 'axios';
 import { Buffer } from 'buffer';
-import { CryptoJS } from 'crypto-js';
+import CryptoJS from 'crypto-js'; // Correct CryptoJS import
 
 const { createMessage, encrypt } = require('openpgp');
 
