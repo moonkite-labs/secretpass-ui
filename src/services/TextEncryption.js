@@ -1,9 +1,9 @@
 const { createMessage, encrypt } = require('openpgp');
-require('uuid');
-const axios = require('axios');
-const CryptoJS = require('crypto-js');
+import axios from 'axios';
+import { Buffer } from 'buffer';
+import CryptoJS from 'crypto-js'; // Correct CryptoJS import
 
-const generateRandomPassword = (length) => {
+export const generateRandomPassword = (length) => {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let password = '';
   for (let i = 0; i < length; i++) {
@@ -12,7 +12,7 @@ const generateRandomPassword = (length) => {
   return password;
 };
 
-const encryptMessage = async (data, password) => {
+export const encryptMessage = async (data, password) => {
   try {
     const message = await createMessage({ text: data });
     return await encrypt({ message, passwords: [password] });
@@ -22,18 +22,13 @@ const encryptMessage = async (data, password) => {
   }
 };
 
-// Usage example
-const data =
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet pretium dui. Nulla aliquam placerat leo. Vestibulum sit amet interdum odio. Quisque dapibus ullamcorper fringilla. Suspendisse euismod eros a ipsum aliquet tempus. Fusce bibendum feugiat arcu ac fringilla. Cras at elit nec justo vestibulum auctor. Sed laoreet tellus ut ligula commodo tristique. Nam eu mauris nec turpis viverra luctus. Etiam eleifend, nulla eget convallis rhoncus, nunc lectus consequat leo, vitae cursus tortor eros id ex. Sed sed neque eget sem eleifend facilisis. Mauris feugiat sollicitudin mi, eu efficitur nulla gravida ac. Mauris finibus tortor eu eros volutpat scelerisque. Proin ullamcorper eros a urna aliquam vestibulum. Suspendisse et orci ut erat fermentum bibendum.';
-// const data = data2 + data2
-const password = generateRandomPassword(32);
-// const uuid = uuidv4()
-// const identity = Buffer.from(uuid + '.' + password).toString('base64');
-const randomPIN = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
+export const EncryptText = async (message, password) => {
+  try {
+    const randomPIN = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
 
-encryptMessage(data, password)
-  .then((encrypted) => {
-    console.log('Data Length :', data.length);
+    const encrypted = await encryptMessage(message, password);
+
+    console.log('Data Length :', message.length);
     console.log('Password:', password);
 
     const payload = {
@@ -42,30 +37,28 @@ encryptMessage(data, password)
       expiration: 3600
     };
 
-    axios
-      .post('http://155.4.113.208:7777/secret', payload)
-      .then((response) => {
-        if (response.data.status === 'success') {
-          const uid = response.data.data.uid;
-          // const decryptedMessage = decryptMessage(uid, password);
-          // console.log('Decrypted Message:', decryptedMessage)
-          console.log('UID:', uid);
-          const link = Buffer.from(uid + '.' + password).toString('base64');
-          console.log('Link:', 'http://localhost/t/d/' + link);
-          // Perform further actions with the uid
-          console.log('PIN:', randomPIN);
-          const encryptedLink = CryptoJS.AES.encrypt(link, randomPIN.toString()).toString().replace(/=/g, '');
-          console.log('Encrypted Link: ', 'http://localhost/t/d/p/' + encryptedLink);
-          console.log('Decrypted Link: ', CryptoJS.AES.decrypt(encryptedLink, randomPIN.toString()).toString(CryptoJS.enc.Utf8));
-        } else {
-          console.log('Status is not success');
-          // Handle the case when the status is not success
-        }
-      })
-      .catch((error) => {
-        console.error('API Error:', error);
-      });
-  })
-  .catch((error) => {
+    console.log(payload);
+
+    const response = await axios.post('http://155.4.113.208:7777/secret', payload);
+
+    if (response.data.status === 'success') {
+      console.log('SUCCESSFUL');
+      const uid = response.data.data.uid;
+      console.log('UID:', uid);
+      const link = Buffer.from(uid + '.' + password).toString('base64');
+      console.log('Link:', 'http://localhost/t/d/' + link);
+      console.log('PIN:', randomPIN);
+      const encryptedLink = CryptoJS.AES.encrypt(link, randomPIN.toString()).toString().replace(/=/g, '');
+      console.log('Encrypted Link: ', 'http://localhost/t/d/p/' + encryptedLink);
+      console.log('Decrypted Link: ', CryptoJS.AES.decrypt(encryptedLink, randomPIN.toString()).toString(CryptoJS.enc.Utf8));
+
+      return 'http://localhost/t/d/p/' + encryptedLink;
+    } else {
+      console.log('Status is not success');
+      throw new Error('Status is not success');
+    }
+  } catch (error) {
     console.error('Error:', error);
-  });
+    throw error;
+  }
+};

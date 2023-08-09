@@ -2,14 +2,7 @@ import PropTypes from 'prop-types';
 // form
 import { useFormContext, Controller } from 'react-hook-form';
 // @mui
-import {
-  Radio,
-  FormLabel,
-  RadioGroup,
-  FormControl,
-  FormHelperText,
-  FormControlLabel,
-} from '@mui/material';
+import { Radio, FormLabel, RadioGroup, FormControl, FormHelperText, FormControlLabel } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -19,18 +12,10 @@ RHFRadioGroup.propTypes = {
   label: PropTypes.string,
   options: PropTypes.array,
   spacing: PropTypes.number,
-  helperText: PropTypes.node,
+  helperText: PropTypes.node
 };
 
-export default function RHFRadioGroup({
-  row,
-  name,
-  label,
-  options,
-  spacing,
-  helperText,
-  ...other
-}) {
+export default function RHFRadioGroup({ row, name, label, options, spacing, helperText, ...other }) {
   const { control } = useFormContext();
 
   const labelledby = label ? `${name}-${label}` : '';
@@ -46,7 +31,6 @@ export default function RHFRadioGroup({
               {label}
             </FormLabel>
           )}
-
           <RadioGroup {...field} aria-labelledby={labelledby} row={row} {...other}>
             {options.map((option) => (
               <FormControlLabel
@@ -56,14 +40,14 @@ export default function RHFRadioGroup({
                 label={option.label}
                 sx={{
                   '&:not(:last-of-type)': {
-                    mb: spacing || 0,
+                    mb: spacing || 0
                   },
                   ...(row && {
                     mr: 0,
                     '&:not(:last-of-type)': {
-                      mr: spacing || 2,
-                    },
-                  }),
+                      mr: spacing || 2
+                    }
+                  })
                 }}
               />
             ))}
