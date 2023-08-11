@@ -12,7 +12,8 @@ import {
   // Radio,
   FormHelperText,
   Snackbar,
-  Box
+  Box,
+  IconButton
 } from '@mui/material';
 
 // form
@@ -129,12 +130,11 @@ const TextPage = () => {
               value={encryptedUrl}
             />
           </FormControl>
-          <Button size="medium" variant="contained" sx={{ display: 'flex', px: 5, textTransform: 'capitalize' }} onClick={handleCopy}>
+          <IconButton size="medium" variant="contained" sx={{ display: 'flex', px: 1, textTransform: 'capitalize' }} onClick={handleCopy}>
             <Box display="flex" alignItems="center">
               <CopyOutlined />
-              <Typography> Copy</Typography>
             </Box>
-          </Button>
+          </IconButton>
         </Stack>
         <Stack direction="row" alignItems="center" spacing={2} sx={{ py: 2 }}>
           <Stack>

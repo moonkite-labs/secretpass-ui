@@ -46,13 +46,13 @@ export const EncryptText = async (message, password) => {
       const uid = response.data.data.uid;
       console.log('UID:', uid);
       const link = Buffer.from(uid + '.' + password).toString('base64');
-      console.log('Link:', 'http://localhost/t/d/' + link);
+      console.log('Link:', 'http://localhost:3000/t/d/' + link);
       console.log('PIN:', randomPIN);
       const encryptedLink = CryptoJS.AES.encrypt(link, randomPIN.toString()).toString().replace(/=/g, '');
-      console.log('Encrypted Link: ', 'http://localhost/t/d/p/' + encryptedLink);
+      console.log('Encrypted Link: ', 'http://localhost:3000/t/d/p/' + encryptedLink);
       console.log('Decrypted Link: ', CryptoJS.AES.decrypt(encryptedLink, randomPIN.toString()).toString(CryptoJS.enc.Utf8));
-
-      return 'http://localhost/t/d/p/' + encryptedLink;
+      const encodedMessage = encodeURIComponent(encryptedLink); // Encode the message
+      return 'http://localhost:3000/t/d/p/' + encodedMessage;
     } else {
       console.log('Status is not success');
       throw new Error('Status is not success');
