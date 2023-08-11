@@ -56,10 +56,11 @@ const TextPage = () => {
     handleSubmit,
     formState: { errors }
   } = methods;
+
   const onSubmit = async (data) => {
     const password = generateRandomPassword(32);
     try {
-      const encryptedLink = await EncryptText(data.message, password);
+      const encryptedLink = await EncryptText(data.message, data.time, password);
       setEncryptedUrl(encryptedLink);
       console.log('Selected Radio Value:', data.time);
     } catch (error) {

@@ -22,7 +22,7 @@ export const encryptMessage = async (data, password) => {
   }
 };
 
-export const EncryptText = async (message, password) => {
+export const EncryptText = async (message, validity, password) => {
   try {
     // const randomPIN = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
 
@@ -32,9 +32,9 @@ export const EncryptText = async (message, password) => {
     console.log('Password:', password);
 
     const payload = {
-      once: true,
+      once: validity == 'once' ? true : false,
       message: JSON.stringify(encrypted),
-      expiration: 3600
+      expiration: validity
     };
 
     console.log(payload);
@@ -54,15 +54,15 @@ export const EncryptText = async (message, password) => {
       // console.log('Decrypted Link: ', CryptoJS.AES.decrypt(encryptedLink, randomPIN.toString()).toString(CryptoJS.enc.Utf8));
 
       return 'http://localhost:3000/t/d/' + link;
-// =======
-//       console.log('Link:', 'http://localhost:3000/t/d/' + link);
-//       console.log('PIN:', randomPIN);
-//       const encryptedLink = CryptoJS.AES.encrypt(link, randomPIN.toString()).toString().replace(/=/g, '');
-//       console.log('Encrypted Link: ', 'http://localhost:3000/t/d/p/' + encryptedLink);
-//       console.log('Decrypted Link: ', CryptoJS.AES.decrypt(encryptedLink, randomPIN.toString()).toString(CryptoJS.enc.Utf8));
-//       const encodedMessage = encodeURIComponent(encryptedLink); // Encode the message
-//       return 'http://localhost:3000/t/d/p/' + encodedMessage;
-// >>>>>>> 0bdec9f907ada7073b2cc68764735b1237dc6f2d
+      // =======
+      //       console.log('Link:', 'http://localhost:3000/t/d/' + link);
+      //       console.log('PIN:', randomPIN);
+      //       const encryptedLink = CryptoJS.AES.encrypt(link, randomPIN.toString()).toString().replace(/=/g, '');
+      //       console.log('Encrypted Link: ', 'http://localhost:3000/t/d/p/' + encryptedLink);
+      //       console.log('Decrypted Link: ', CryptoJS.AES.decrypt(encryptedLink, randomPIN.toString()).toString(CryptoJS.enc.Utf8));
+      //       const encodedMessage = encodeURIComponent(encryptedLink); // Encode the message
+      //       return 'http://localhost:3000/t/d/p/' + encodedMessage;
+      // >>>>>>> 0bdec9f907ada7073b2cc68764735b1237dc6f2d
     } else {
       console.log('Status is not success');
       throw new Error('Status is not success');
