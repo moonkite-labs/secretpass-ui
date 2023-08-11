@@ -41,6 +41,10 @@ const MainRoutes = {
     {
       path: 'secret-message',
       element: <SecretMessage />
+    },
+    {
+      path: 't/d/p/:link',
+      element: <SecretMessage />
     }
   ]
 };
