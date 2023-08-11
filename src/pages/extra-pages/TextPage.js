@@ -1,20 +1,7 @@
 import { useState } from 'react';
 
 // material-ui
-import {
-  FormControl,
-  OutlinedInput,
-  Button,
-  Typography,
-  Stack,
-  // RadioGroup,
-  // FormControlLabel,
-  // Radio,
-  FormHelperText,
-  Snackbar,
-  Box,
-  IconButton
-} from '@mui/material';
+import { FormControl, OutlinedInput, Button, Typography, Stack, FormHelperText, Snackbar, Box, IconButton } from '@mui/material';
 
 // form
 import { useForm } from 'react-hook-form';
@@ -27,11 +14,10 @@ import { LoadingButton } from '@mui/lab';
 // project import
 import MainCard from 'components/MainCard';
 
-// Service Import
-// import { encryptMessage } from '../../services/TextEncryption';
-
 // assets
 import { CopyOutlined } from '@ant-design/icons';
+
+// Service Import
 import { EncryptText } from 'services/TextEncryption';
 
 // ==============================|| SAMPLE PAGE ||============================== //
@@ -108,7 +94,7 @@ const TextPage = () => {
             </Button>
             <Typography>maximum characters count is 1000</Typography>
           </Stack>
-          <RHFRadioGroup name="time" row label="Erase secret after" options={Time_Valid} />
+          <RHFRadioGroup name="time" row label="Erase secret after" options={Time_Validity} />
           <Stack direction="row" spacing={2} alignItems="center" sx={{ py: 2 }}>
             <LoadingButton size="small" variant="contained" sx={{ textTransform: 'capitalize' }} type="submit">
               Encrypt
@@ -192,25 +178,25 @@ const TextPage = () => {
 
 export default TextPage;
 
-const Time_Valid = [
+const Time_Validity = [
   {
     value: 'once',
     label: 'Once Received'
   },
   {
-    value: 60 * 60,
+    value: 3600,
     label: '1 hour'
   },
   {
-    value: 12 * 60 * 60,
+    value: 43200,
     label: '12 hour'
   },
   {
-    value: 24 * 60 * 60,
+    value: 86400,
     label: '1 day'
   },
   {
-    value: 7 * 24 * 60 * 60,
+    value: 604800,
     label: '1 week'
   }
 ];

@@ -24,8 +24,6 @@ export const encryptMessage = async (data, password) => {
 
 export const EncryptText = async (message, validity, password) => {
   try {
-    // const randomPIN = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
-
     const encrypted = await encryptMessage(message, password);
 
     console.log('Data Length :', message.length);
@@ -34,7 +32,7 @@ export const EncryptText = async (message, validity, password) => {
     const payload = {
       once: validity == 'once' ? true : false,
       message: JSON.stringify(encrypted),
-      expiration: validity
+      expiration: validity == 'once' ? 0 : parseInt(validity)
     };
 
     console.log(payload);

@@ -14,7 +14,7 @@ import { processLink } from 'services/TextDecryption';
 
 const SecretMessage = () => {
   const { link } = useParams();
-  const decodedMessage = decodeURIComponent(link); // Decode the message
+  const decodedMessage = decodeURIComponent(link);
 
   const getMessage = async () => {
     try {
@@ -25,12 +25,12 @@ const SecretMessage = () => {
     }
   };
 
-  const [message, setMessage] = useState(''); // Initialize with an empty string
+  const [message, setMessage] = useState('');
   useEffect(() => {
     getMessage().then((resolvedMessage) => {
       setMessage(resolvedMessage);
     });
-  }, []); // Empty dependency array means this effect runs only once, after initial render
+  }, []);
 
   return (
     <MainCard>
