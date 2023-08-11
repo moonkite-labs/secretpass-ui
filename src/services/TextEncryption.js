@@ -53,7 +53,7 @@ export const EncryptText = async (message, password) => {
       // console.log('Encrypted Link: ', 'http://localhost/t/d/p/' + encryptedLink);
       // console.log('Decrypted Link: ', CryptoJS.AES.decrypt(encryptedLink, randomPIN.toString()).toString(CryptoJS.enc.Utf8));
 
-      return 'http://localhost/t/d/' + link;
+      return 'http://localhost:3000/t/d/' + link;
 // =======
 //       console.log('Link:', 'http://localhost:3000/t/d/' + link);
 //       console.log('PIN:', randomPIN);
