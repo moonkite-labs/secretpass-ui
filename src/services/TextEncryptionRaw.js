@@ -70,7 +70,6 @@ encryptMessage(data, password)
     console.error('Error:', error);
   });
 
-
 // Steps for Encryption 2nd Layer
 // 1. Generate a random 6 digit PIN
 // 2. Encrypt the link with the PIN - const encryptedLink = CryptoJS.AES.encrypt(link, randomPIN.toString()).toString().replace(/=/g, '');
