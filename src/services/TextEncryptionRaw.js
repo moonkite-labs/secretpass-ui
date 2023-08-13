@@ -69,3 +69,16 @@ encryptMessage(data, password)
   .catch((error) => {
     console.error('Error:', error);
   });
+
+
+// Steps for Encryption 2nd Layer
+// 1. Generate a random 6 digit PIN
+// 2. Encrypt the link with the PIN - const encryptedLink = CryptoJS.AES.encrypt(link, randomPIN.toString()).toString().replace(/=/g, '');
+// 3. Send the encrypted link to the user email
+
+//Decryption of the email link
+// 4. User clicks on the link and enters the PIN
+// 5. Decrypt the link with the PIN - const originalLink = CryptoJS.AES.decrypt(encryptedLink, randomPIN.toString()).toString(CryptoJS.enc.Utf8);  // returns the original link
+// 6. Extract the UID and password from the decrypted link
+// 7. Fetch the encrypted message from the server using the UID
+// 8. Decrypt the message using the password
