@@ -23,7 +23,6 @@ export const encryptMessage = async (data, password) => {
 };
 
 export const EncryptText = async (message, validity, password) => {
-  const randomPIN = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
 
   try {
     const encrypted = await encryptMessage(message, password);
@@ -32,9 +31,9 @@ export const EncryptText = async (message, validity, password) => {
     console.log('Password:', password);
 
     const payload = {
-      once: validity == 'once' ? true : false,
+      once: validity === 'once',
       message: JSON.stringify(encrypted),
-      expiration: validity == 'once' ? 0 : parseInt(validity)
+      expiration: validity === 'once' ? 0 : parseInt(validity)
     };
 
     console.log(payload);
@@ -50,12 +49,11 @@ export const EncryptText = async (message, validity, password) => {
       console.log('Link:', 'http://localhost/t/d/' + link);
       // return 'http://localhost:3000/t/d/' + link; // First layer
 
-      const encryptedLink = CryptoJS.AES.encrypt(link, randomPIN.toString()).toString().replace(/=/g, '');
-      //       console.log('Encrypted Link: ', 'http://localhost:3000/t/d/p/' + encryptedLink);
-      const encodedMessage = encodeURIComponent(encryptedLink); // Encode the message
+      // const encryptedLink = CryptoJS.AES.encrypt(link, randomPIN.toString()).toString().replace(/=/g, '');
+      // //       console.log('Encrypted Link: ', 'http://localhost:3000/t/d/p/' + encryptedLink);
+      // const encodedMessage = encodeURIComponent(encryptedLink); // Encode the message
       return {
-        encryptedLink: 'http://localhost:3000/t/d/p/' + encodedMessage,
-        randomPIN: randomPIN
+        decryptedLink: link
       };
     } else {
       console.log('Status is not success');
@@ -67,16 +65,19 @@ export const EncryptText = async (message, validity, password) => {
   }
 };
 
-export const SendEmail = async (emailData, encryptedUrl) => {
-  const payload = {
-    sendTo: emailData[0],
-    secureLink: encryptedUrl
-  };
+export const SendEmail = async (emailData, link) => {
+  const randomPIN = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
   try {
+    const encryptedLink = CryptoJS.AES.encrypt(link, randomPIN.toString()).toString().replace(/=/g, '');
+    console.log('Encrypted Link: ', 'http://localhost:3000/t/d/p/' + encryptedLink)
+    const payload = {
+      sendTo: emailData[0],
+      secureLink: 'http://localhost:3000/t/d/p/' + encodeURIComponent(encryptedLink),
+    };
     const response = await axios.post('http://155.4.113.208:7777/email', payload);
     if (response.data.status === 'success') {
       console.log('SUCCESSFUL');
-      return { emailSent: true };
+      return { emailSent: true, pin: randomPIN };
     }
   } catch (error) {
     console.error('Encryption failed:', error);
