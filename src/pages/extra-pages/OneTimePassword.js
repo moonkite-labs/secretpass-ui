@@ -1,8 +1,9 @@
 // material-ui
-import { Typography, Stack, FormHelperText, Box } from '@mui/material';
+import { Typography, Stack, FormHelperText, Box, Button } from '@mui/material';
 import FormProvider, { RHFCodes } from '../../components/hook-form';
 // import { LoadingButton } from '@mui/lab';
 import * as Yup from 'yup';
+import { useNavigate } from 'react-router-dom';
 
 // form
 import { useForm } from 'react-hook-form';
@@ -11,6 +12,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 // ==============================|| SAMPLE PAGE ||============================== //
 
 const FilePage = () => {
+  const navigate = useNavigate();
+
   const VerifyCodeSchema = Yup.object().shape({
     code1: Yup.string().required('Code is required'),
     code2: Yup.string().required('Code is required'),
@@ -18,11 +21,6 @@ const FilePage = () => {
     code4: Yup.string().required('Code is required'),
     code5: Yup.string().required('Code is required'),
     code6: Yup.string().required('Code is required'),
-    email: Yup.string().required('Email is required').email('Email must be a valid email address'),
-    password: Yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
-    confirmPassword: Yup.string()
-      .required('Confirm password is required')
-      .oneOf([Yup.ref('password')], 'Passwords must match')
   });
 
   const defaultValues = {
@@ -45,18 +43,8 @@ const FilePage = () => {
     formState: { errors }
   } = methods;
 
-  const onSubmit = async (data) => {
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      console.log('DATA:', {
-        email: data.email,
-        code: `${data.code1}${data.code2}${data.code3}${data.code4}${data.code5}${data.code6}`,
-        password: data.password
-      });
-      sessionStorage.removeItem('email-recovery');
-    } catch (error) {
-      console.error(error);
-    }
+  const onSubmit = async () => {
+    navigate('/t/d/:link');
   };
 
   return (
@@ -82,15 +70,11 @@ const FilePage = () => {
             </FormHelperText>
           )}
 
-          {/* <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting} sx={{ mt: 3 }}>
-            Update Password
-          </LoadingButton> */}
+          <Button fullWidth size="large" type="submit" variant="contained" sx={{ mt: 3 }}>
+            Verify
+          </Button>
         </Stack>
       </FormProvider>
-      {/* <Typography variant="body2" sx={{ my: 3 }}>
-        Don’t have a code? &nbsp;
-        <Link variant="subtitle2">Resend code</Link>
-      </Typography> */}
     </Box>
   );
 };

@@ -1,7 +1,20 @@
 import { useState } from 'react';
 
 // material-ui
-import { FormControl, OutlinedInput, Button, Typography, Stack, FormHelperText, Snackbar, Box, IconButton } from '@mui/material';
+import {
+  FormControl,
+  OutlinedInput,
+  Button,
+  Typography,
+  Stack,
+  FormHelperText,
+  Snackbar,
+  Box,
+  IconButton,
+  Divider,
+  TextField,
+  Chip
+} from '@mui/material';
 
 // form
 import { useForm } from 'react-hook-form';
@@ -18,13 +31,16 @@ import MainCard from 'components/MainCard';
 import { CopyOutlined } from '@ant-design/icons';
 
 // Service Import
-import { EncryptText } from 'services/TextEncryption';
+import { EncryptText, SendEmail } from 'services/TextEncryption';
 
 // ==============================|| SAMPLE PAGE ||============================== //
 
 const TextPage = () => {
   const [encryptedUrl, setEncryptedUrl] = useState('');
   const [open, setOpen] = useState(false);
+  const [randomPin, setRandomPin] = useState('');
+  const [emailInput, setEmailInput] = useState('');
+  const [emailChips, setEmailChips] = useState([]);
 
   const TextSchema = Yup.object().shape({
     message: Yup.string().required('Code is required')
@@ -46,9 +62,20 @@ const TextPage = () => {
   const onSubmit = async (data) => {
     const password = generateRandomPassword(32);
     try {
-      const encryptedLink = await EncryptText(data.message, data.time, password);
-      setEncryptedUrl(encryptedLink);
-      console.log('Selected Radio Value:', data.time);
+      const result = await EncryptText(data.message, data.time, password);
+      setEncryptedUrl(result.encryptedLink);
+      setRandomPin(result.randomPIN);
+    } catch (error) {
+      console.error('Encryption error:', error);
+    }
+  };
+
+  const handleSendEmail = async () => {
+    try {
+      const result = await SendEmail(emailChips, encryptedUrl);
+      if (result.emailSent) {
+        alert('Email Sent');
+      }
     } catch (error) {
       console.error('Encryption error:', error);
     }
@@ -63,9 +90,28 @@ const TextPage = () => {
     return password;
   };
 
-  const handleCopy = () => {
+  const handleLinkCopy = () => {
     setOpen(true);
     navigator.clipboard.writeText(encryptedUrl);
+  };
+
+  const handleEmailInputChange = (event) => {
+    setEmailInput(event.target.value);
+  };
+
+  const handleEmailInputKeyDown = (event) => {
+    if (event.key === 'Enter' || event.key === ',') {
+      event.preventDefault();
+      const newEmail = emailInput.trim();
+      if (newEmail) {
+        setEmailChips([...emailChips, newEmail]);
+        setEmailInput('');
+      }
+    }
+  };
+
+  const handleDeleteChip = (chipToDelete) => () => {
+    setEmailChips((chips) => chips.filter((chip) => chip !== chipToDelete));
   };
 
   return (
@@ -105,7 +151,7 @@ const TextPage = () => {
           <Box display="flex" alignItems="center">
             <Typography>Share this link:</Typography>
           </Box>
-          <FormControl sx={{ width: { xs: '100%', md: 500 } }}>
+          <FormControl sx={{ width: { xs: '100%', md: '85%' } }}>
             <OutlinedInput
               size="medium"
               id="header-search"
@@ -117,7 +163,7 @@ const TextPage = () => {
               value={encryptedUrl}
             />
           </FormControl>
-          <IconButton size="medium" variant="contained" sx={{ display: 'flex', px: 1, textTransform: 'capitalize' }} onClick={handleCopy}>
+          <IconButton size="medium" variant="contained" sx={{ display: 'flex', px: 1, textTransform: 'capitalize' }} onClick={handleLinkCopy}>
             <Box display="flex" alignItems="center">
               <CopyOutlined />
             </Box>
@@ -131,14 +177,43 @@ const TextPage = () => {
             </Typography>
           </Stack>
         </Stack>
+        <Divider />
         <Typography sx={{ my: 3.5 }}>
-          You also can share the link secured link above via email but it must be protected with the PIN. The PIN must be shared secretly in{' '}
-          <br></br>
+          You also can share the link secured link above via email but it must be protected with the PIN. The PIN must be shared secretly in
           order to avoid the information breached by other unintended person
         </Typography>
+        <Typography sx={{ my: 3.5 }}>Email Secured Link</Typography>
         <Stack direction="row" spacing={2} alignItems="center" sx={{ py: 2 }}>
-          <Typography>Enter Your PIN:</Typography>
-          <FormControl sx={{ width: { xs: '100%', md: 500 } }}>
+          <Box sx={{ width: '100%' }}>
+            <TextField
+              label="Enter Email(s)"
+              variant="outlined"
+              fullWidth
+              value={emailInput}
+              onChange={handleEmailInputChange}
+              onKeyDown={handleEmailInputKeyDown}
+              placeholder="Enter email and press Enter or comma"
+            />
+            <div>
+              {emailChips.map((email) => (
+                <Chip
+                  key={email}
+                  label={email}
+                  onDelete={handleDeleteChip(email)}
+                  color="primary"
+                  variant="outlined"
+                  style={{ margin: '5px' }}
+                />
+              ))}
+            </div>
+          </Box>
+        </Stack>
+        <Typography>separate with comma (,) for more email </Typography>
+        <Stack direction="row" spacing={2} alignItems="center" sx={{ py: 2 }}>
+          <Button size="small" variant="contained" sx={{ textTransform: 'capitalize' }} onClick={handleSendEmail}>
+            Send Email with PIN
+          </Button>
+          <FormControl>
             <OutlinedInput
               size="small"
               id="header-search"
@@ -146,31 +221,15 @@ const TextPage = () => {
               inputProps={{
                 'aria-label': 'weight'
               }}
+              value={randomPin}
               placeholder="Ctrl + K"
             />
           </FormControl>
-          <Typography>or leave it blank for auto generated PIN:</Typography>
         </Stack>
-        <Stack direction="row" spacing={2} alignItems="center" sx={{ py: 2 }}>
-          <FormControl sx={{ width: '25%' }}>
-            <OutlinedInput
-              size="small"
-              id="header-search"
-              aria-describedby="header-search-text"
-              inputProps={{
-                'aria-label': 'weight'
-              }}
-              placeholder="Ctrl + K"
-            />
-          </FormControl>
-          <Button size="small" variant="contained" sx={{ textTransform: 'capitalize' }}>
-            Encrypt & Send
-          </Button>{' '}
-        </Stack>
-        <Typography sx={{ mt: 3.5 }}>
+        <Typography>
           Warning! Remember that secrets can only be downloaded once if not set otherwise. So do not open the link yourself.
         </Typography>
-        <Typography>The PIN should be shared separately with other communication channels. It{`'`}s not included in the email </Typography>
+        <Typography>The PIN should be shared separately with other communication channels. It&apos;s not included in the email</Typography>
       </MainCard>
     </>
   );

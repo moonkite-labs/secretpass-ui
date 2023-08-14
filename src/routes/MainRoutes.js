@@ -44,7 +44,7 @@ const MainRoutes = {
     },
     {
       path: 't/d/p/:link',
-      element: <SecretMessage />
+      element: <OneTimePassword />
     },
     {
       path: 't/d/:link',

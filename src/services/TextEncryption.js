@@ -1,7 +1,7 @@
 const { createMessage, encrypt } = require('openpgp');
 import axios from 'axios';
 import { Buffer } from 'buffer';
-// import CryptoJS from 'crypto-js'; // Correct CryptoJS import
+import CryptoJS from 'crypto-js'; // Correct CryptoJS import
 
 export const generateRandomPassword = (length) => {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -23,6 +23,8 @@ export const encryptMessage = async (data, password) => {
 };
 
 export const EncryptText = async (message, validity, password) => {
+  const randomPIN = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
+
   try {
     const encrypted = await encryptMessage(message, password);
 
@@ -46,27 +48,39 @@ export const EncryptText = async (message, validity, password) => {
       const link = Buffer.from(uid + '.' + password).toString('base64');
 
       console.log('Link:', 'http://localhost/t/d/' + link);
-      // console.log('PIN:', randomPIN);
-      // const encryptedLink = CryptoJS.AES.encrypt(link, randomPIN.toString()).toString().replace(/=/g, '');
-      // console.log('Encrypted Link: ', 'http://localhost/t/d/p/' + encryptedLink);
-      // console.log('Decrypted Link: ', CryptoJS.AES.decrypt(encryptedLink, randomPIN.toString()).toString(CryptoJS.enc.Utf8));
+      // return 'http://localhost:3000/t/d/' + link; // First layer
 
-      return 'http://localhost:3000/t/d/' + link;  // First layer
-      // =======
-      //       console.log('Link:', 'http://localhost:3000/t/d/' + link);
-      //       console.log('PIN:', randomPIN);
-      //       const encryptedLink = CryptoJS.AES.encrypt(link, randomPIN.toString()).toString().replace(/=/g, '');
+      const encryptedLink = CryptoJS.AES.encrypt(link, randomPIN.toString()).toString().replace(/=/g, '');
       //       console.log('Encrypted Link: ', 'http://localhost:3000/t/d/p/' + encryptedLink);
       //       console.log('Decrypted Link: ', CryptoJS.AES.decrypt(encryptedLink, randomPIN.toString()).toString(CryptoJS.enc.Utf8));
-      //       const encodedMessage = encodeURIComponent(encryptedLink); // Encode the message
-      //       return 'http://localhost:3000/t/d/p/' + encodedMessage;
-      // >>>>>>> 0bdec9f907ada7073b2cc68764735b1237dc6f2d
+      const encodedMessage = encodeURIComponent(encryptedLink); // Encode the message
+      return {
+        encryptedLink: 'http://localhost:3000/t/d/p/' + encodedMessage,
+        randomPIN: randomPIN
+      };
     } else {
       console.log('Status is not success');
       throw new Error('Status is not success');
     }
   } catch (error) {
     console.error('Error:', error);
+    throw error;
+  }
+};
+
+export const SendEmail = async (emailData, encryptedUrl) => {
+  const payload = {
+    sendTo: emailData[0],
+    secureLink: encryptedUrl
+  };
+  try {
+    const response = await axios.post('http://155.4.113.208:7777/email', payload);
+    if (response.data.status === 'success') {
+      console.log('SUCCESSFUL');
+      return { emailSent: true };
+    }
+  } catch (error) {
+    console.error('Encryption failed:', error);
     throw error;
   }
 };

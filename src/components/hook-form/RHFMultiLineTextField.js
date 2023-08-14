@@ -22,7 +22,7 @@ export default function RHFMultiLineTextField({ name, helperText, ...other }) {
         <TextField
           multiline
           rows={5}
-          placeholder="Ctrl + K" 
+          placeholder="Ctrl + K"
           {...field}
           fullWidth
           value={typeof field.value === 'number' && field.value === 0 ? '' : field.value}
