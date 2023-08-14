@@ -1,5 +1,16 @@
 import axios from 'axios';
 const { readMessage, decrypt } = require('openpgp');
+const CryptoJS = require('crypto-js');
+
+export const validatePin = (code, encryptedLink) => {
+  const concatenatedString = Object.values(code).join('');
+  const decryptedLink = CryptoJS.AES.decrypt(encryptedLink, concatenatedString.toString()).toString(CryptoJS.enc.Utf8);
+  return {
+    decryptedLink: decryptedLink,
+    status: 'success'
+  };
+
+};
 
 export const processLink = async (link) => {
   try {

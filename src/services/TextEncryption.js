@@ -52,7 +52,6 @@ export const EncryptText = async (message, validity, password) => {
 
       const encryptedLink = CryptoJS.AES.encrypt(link, randomPIN.toString()).toString().replace(/=/g, '');
       //       console.log('Encrypted Link: ', 'http://localhost:3000/t/d/p/' + encryptedLink);
-      //       console.log('Decrypted Link: ', CryptoJS.AES.decrypt(encryptedLink, randomPIN.toString()).toString(CryptoJS.enc.Utf8));
       const encodedMessage = encodeURIComponent(encryptedLink); // Encode the message
       return {
         encryptedLink: 'http://localhost:3000/t/d/p/' + encodedMessage,

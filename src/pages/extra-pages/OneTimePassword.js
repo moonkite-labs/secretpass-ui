@@ -9,9 +9,15 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
+import { validatePin } from 'services/TextDecryption';
+
+import { useParams } from 'react-router-dom'; // Import the useParams hook
+
 // ==============================|| SAMPLE PAGE ||============================== //
 
 const FilePage = () => {
+  const { link } = useParams();
+  const decodedMessage = decodeURIComponent(link);
   const navigate = useNavigate();
 
   const VerifyCodeSchema = Yup.object().shape({
@@ -20,7 +26,7 @@ const FilePage = () => {
     code3: Yup.string().required('Code is required'),
     code4: Yup.string().required('Code is required'),
     code5: Yup.string().required('Code is required'),
-    code6: Yup.string().required('Code is required'),
+    code6: Yup.string().required('Code is required')
   });
 
   const defaultValues = {
@@ -43,8 +49,12 @@ const FilePage = () => {
     formState: { errors }
   } = methods;
 
-  const onSubmit = async () => {
-    navigate('/t/d/:link');
+  const onSubmit = async (data) => {
+    const response = validatePin(data, decodedMessage);
+    if (response.status == 'success') {
+      navigate(`/t/d/${response.decryptedLink}`);
+    }
+    // ADD FAILED PIN ENTERED FLOW HERE
   };
 
   return (
