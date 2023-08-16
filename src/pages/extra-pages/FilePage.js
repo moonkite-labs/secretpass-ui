@@ -1,15 +1,48 @@
 import { useState } from 'react';
 
 // material-ui
-import { FormControl, OutlinedInput, Button, Typography, Stack, RadioGroup, FormControlLabel, Radio, Input } from '@mui/material';
+import {
+  FormControl,
+  OutlinedInput,
+  Button,
+  Typography,
+  Stack,
+  Input,
+  FormHelperText,
+  Box,
+  IconButton,
+  Divider,
+  TextField,
+  Chip,
+  Snackbar
+} from '@mui/material';
 
 // project import
 import MainCard from 'components/MainCard';
 
+import FormProvider, { RHFRadioGroup } from '../../components/hook-form';
+
+// form
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as Yup from 'yup';
+
+// assets
+import { CopyOutlined } from '@ant-design/icons';
+
+import upload from '../../assets/Upload.svg';
+
+
 // ==============================|| SAMPLE PAGE ||============================== //
 
 const FilePage = () => {
+  const [encryptedUrl, setEncryptedUrl] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
+  const [base64Url, setBase64Url] = useState('');
+  const [open, setOpen] = useState(false);
+  const [randomPin, setRandomPin] = useState('');
+  const [emailInput, setEmailInput] = useState('');
+  const [emailChips, setEmailChips] = useState([]);
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -31,97 +64,209 @@ const FilePage = () => {
   const handleRemove = () => {
     setSelectedFile(null);
   };
+
+  const handleLinkCopyUrl = () => {
+    setOpen(true);
+    navigator.clipboard.writeText(encryptedUrl);
+  };
+
+  const TextSchema = Yup.object().shape({
+    message: Yup.string().required('Code is required')
+  });
+  const defaultValues = {
+    message: '',
+    time: 'once'
+  };
+  const methods = useForm({
+    mode: 'onChange',
+    resolver: yupResolver(TextSchema),
+    defaultValues
+  });
+  const {
+    handleSubmit,
+    formState: { errors }
+  } = methods;
+
+  const onSubmit = async (data) => {
+    const password = generateRandomPassword(32);
+    try {
+      const result = await EncryptText(data.message, data.time, password);
+      setEncryptedUrl('http://localhost:3000/t/d/' + result.decryptedLink);
+      setBase64Url(result.decryptedLink);
+    } catch (error) {
+      console.error('Encryption error:', error);
+    }
+  };
+
+  const handleSendEmail = async () => {
+    try {
+      console.log('Emails: ', emailChips);
+      console.log('Encrypted URL: ', base64Url);
+      const result = await SendEmail(emailChips, base64Url);
+      if (result.emailSent) {
+        console.log('Random PIN: ', result.pin);
+        setRandomPin(result.pin);
+        alert('Email Sent');
+      }
+    } catch (error) {
+      console.error('Encryption error:', error);
+    }
+  };
+
+  const handleEmailInputChange = (event) => {
+    setEmailInput(event.target.value);
+  };
+
+  const handleEmailInputKeyDown = (event) => {
+    if (event.key === 'Enter' || event.key === ',') {
+      event.preventDefault();
+      const newEmail = emailInput.trim();
+      if (newEmail) {
+        setEmailChips([...emailChips, newEmail]);
+        setEmailInput('');
+      }
+    }
+  };
+
+  const handleLinkCopyPin = () => {
+    setOpen(true);
+    navigator.clipboard.writeText(randomPin);
+  };
+
+  const handleDeleteChip = (chipToDelete) => () => {
+    setEmailChips((chips) => chips.filter((chip) => chip !== chipToDelete));
+  };
+
   return (
     <>
+      <Snackbar
+        message="Copied to clibboard"
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        autoHideDuration={2000}
+        onClose={() => setOpen(false)}
+        open={open}
+      />
       <MainCard>
-        <FormControl sx={{ width: '100%' }}>
-          <div>
-            <label
-              onDrop={handleDrop}
-              onDragOver={handleDragOver}
-              htmlFor="fileInput"
-              style={{
-                border: '2px dashed #aaa',
-                borderRadius: '4px',
-                padding: '1rem',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                marginBottom: '1rem',
-                cursor: 'pointer'
-              }}
-            >
-              {selectedFile ? (
-                <div>
-                  <span>{selectedFile.name}</span>
+        <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+          <FormControl sx={{ width: '100%' }}>
+            <div>
+              <label
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
+                htmlFor="fileInput"
+                style={{
+                  border: '2px dashed #aaa',
+                  borderRadius: '4px',
+                  padding: '1rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  marginBottom: '1rem',
+                  cursor: 'pointer'
+                }}
+              >
+                {selectedFile ? (
+                  <div>
+                    <span>{selectedFile.name}</span>
+                  </div>
+                ) : (
+                  <>
+                    <img src={upload} style={{ height: '50px', margin: '10px' }} alt="upload" />
+                    <span>Drag and drop files here or click to browse</span>
+                  </>
+                )}
+              </label>
+              <Input
+                id="fileInput"
+                type="file"
+                onChange={handleFileChange}
+                value={''} // Reset the input value
+                style={{ display: 'none' }} // Hide the input element
+              />
+              {selectedFile && (
+                <div style={{ display: 'flex' }}>
+                  <Button variant="contained" color="error" onClick={handleRemove}>
+                    Remove
+                  </Button>
                 </div>
-              ) : (
-                <span>Drag and drop files here or click to browse</span>
               )}
-            </label>
-            <Input
-              id="fileInput"
-              type="file"
-              onChange={handleFileChange}
-              value={''} // Reset the input value
-              style={{ display: 'none' }} // Hide the input element
-            />
-            {selectedFile && (
-              <div style={{ display: 'flex' }}>
-                <Button variant="contained" color="error" onClick={handleRemove}>
-                  Remove
-                </Button>
-              </div>
-            )}
-          </div>
-        </FormControl>
-        <Stack direction="row" spacing={2} alignItems="center" sx={{ py: 2 }}>
-          <Button size="small" variant="contained" sx={{ textTransform: 'capitalize' }}>
-            Clear
-          </Button>
-          <Typography>maximum characters count is 1000</Typography>
-        </Stack>
-        <Stack direction="row" spacing={2} alignItems="center" sx={{ py: 2 }}>
-          <Typography>Erase secret after →</Typography>
-          <FormControl>
-            <RadioGroup row aria-labelledby="demo-radio-buttons-group-label" defaultValue="female" name="radio-buttons-group">
-              <FormControlLabel value="female" control={<Radio />} label="Once received" />
-              <FormControlLabel value="male" control={<Radio />} label="10 minutes" />
-              <FormControlLabel value="other" control={<Radio />} label="1 hour" />
-              <FormControlLabel value="other" control={<Radio />} label="12 hour" />
-              <FormControlLabel value="other" control={<Radio />} label="1 day" />
-              <FormControlLabel value="other" control={<Radio />} label="1 week" />
-            </RadioGroup>
+            </div>
           </FormControl>
-        </Stack>
-        <Stack direction="row" spacing={2} alignItems="center" sx={{ py: 2 }}>
-          <Button size="small" variant="contained" sx={{ textTransform: 'capitalize' }}>
-            Encrypt
-          </Button>
-        </Stack>
-        <Stack direction="row" spacing={2} alignItems="start" sx={{ py: 2 }}>
-          <Stack>
-            <Stack direction="row" spacing={2}>
-              <Typography>Share this link</Typography>
-              <Typography>https://secretpass.my/t/p/8myrbyffibavs0pdip6x3uhn990ndxz</Typography>
-            </Stack>
-            <Typography sx={{ mt: 3.5 }}>
-              You can share the link with your choice of communication channels like Slack DM,<br></br> WhatsApp, Telegram and etc. Please
-              be cautious cautious not to share in the public channel
-            </Typography>
+          {!!errors.message && <FormHelperText error sx={{ px: 2 }}></FormHelperText>}
+
+          <Stack direction="row" spacing={2} alignItems="center" sx={{ py: 2 }}>
+            <RHFRadioGroup name="time" row label="Erase secret after" options={Time_Validity} />
           </Stack>
-          <Button size="small" variant="contained" sx={{ textTransform: 'capitalize' }}>
-            Copy
-          </Button>
+          <Stack direction="row" spacing={2} alignItems="center" sx={{ py: 2 }}>
+            <Button size="small" variant="contained" sx={{ textTransform: 'capitalize' }}>
+              Encrypt
+            </Button>
+          </Stack>
+        </FormProvider>
+        <Stack direction="row" spacing={2}>
+          <Box display="flex" alignItems="center">
+            <Typography>Share this link:</Typography>
+          </Box>
+          <FormControl sx={{ width: { xs: '100%', md: '85%' } }}>
+            <OutlinedInput
+              size="medium"
+              id="header-search"
+              aria-describedby="header-search-text"
+              inputProps={{
+                'aria-label': 'weight'
+              }}
+              placeholder="Encrypted Text"
+              value={encryptedUrl}
+            />
+          </FormControl>
+          <IconButton
+            size="medium"
+            variant="contained"
+            sx={{ display: 'flex', px: 1, textTransform: 'capitalize' }}
+            onClick={handleLinkCopyUrl}
+          >
+            <Box display="flex" alignItems="center">
+              <CopyOutlined />
+            </Box>
+          </IconButton>
         </Stack>
+        <Divider sx={{ my: 3.5 }} />
         <Typography sx={{ my: 3.5 }}>
-          You also can share the link secured link above via email but it must be protected with the PIN. The PIN must be shared secretly in{' '}
-          <br></br>
+          You also can share the link secured link above via email but it must be protected with the PIN. The PIN must be shared secretly in
           order to avoid the information breached by other unintended person
         </Typography>
+        <Typography sx={{ my: 3.5 }}>Email Secured Link</Typography>
         <Stack direction="row" spacing={2} alignItems="center" sx={{ py: 2 }}>
-          <Typography>Enter Your PIN:</Typography>
-          <FormControl sx={{ width: { xs: '100%', md: 224 } }}>
+          <Box sx={{ width: '100%' }}>
+            <TextField
+              label="Enter Email(s)"
+              variant="outlined"
+              fullWidth
+              value={emailInput}
+              onChange={handleEmailInputChange}
+              onKeyDown={handleEmailInputKeyDown}
+              placeholder="Enter email and press Enter or comma"
+            />
+            <div>
+              {emailChips.map((email) => (
+                <Chip
+                  key={email}
+                  label={email}
+                  onDelete={handleDeleteChip(email)}
+                  color="primary"
+                  variant="outlined"
+                  style={{ margin: '5px' }}
+                />
+              ))}
+            </div>
+          </Box>
+        </Stack>
+        <Typography>separate by pressing &apos;ENTER&apos; for more email </Typography>
+        <Stack direction="row" spacing={2} alignItems="center" sx={{ py: 2 }}>
+          <Button size="small" variant="contained" sx={{ textTransform: 'capitalize' }} onClick={handleSendEmail}>
+            Send Email with PIN
+          </Button>
+          <FormControl>
             <OutlinedInput
               size="small"
               id="header-search"
@@ -129,34 +274,51 @@ const FilePage = () => {
               inputProps={{
                 'aria-label': 'weight'
               }}
+              value={randomPin}
               placeholder="Ctrl + K"
             />
           </FormControl>
-          <Typography>or leave it blank for auto generated PIN:</Typography>
+          <IconButton
+            size="medium"
+            variant="contained"
+            sx={{ display: 'flex', px: 1, textTransform: 'capitalize' }}
+            onClick={handleLinkCopyPin}
+          >
+            <Box display="flex" alignItems="center">
+              <CopyOutlined />
+            </Box>
+          </IconButton>
         </Stack>
-        <Stack direction="row" spacing={2} alignItems="center" sx={{ py: 2 }}>
-          <FormControl sx={{ width: '25%' }}>
-            <OutlinedInput
-              size="small"
-              id="header-search"
-              aria-describedby="header-search-text"
-              inputProps={{
-                'aria-label': 'weight'
-              }}
-              placeholder="Ctrl + K"
-            />
-          </FormControl>
-          <Button size="small" variant="contained" sx={{ textTransform: 'capitalize' }}>
-            Encrypt & Send
-          </Button>{' '}
-        </Stack>
-        <Typography sx={{ mt: 3.5 }}>
+        <Typography>
           Warning! Remember that secrets can only be downloaded once if not set otherwise. So do not open the link yourself.
         </Typography>
-        <Typography>The PIN should be shared separately with other communication channels. It{`'`}s not included in the email </Typography>
+        <Typography>The PIN should be shared separately with other communication channels. It&apos;s not included in the email</Typography>{' '}
       </MainCard>
     </>
   );
 };
 
 export default FilePage;
+
+const Time_Validity = [
+  {
+    value: 'once',
+    label: 'Once Received'
+  },
+  {
+    value: 3600,
+    label: '1 hour'
+  },
+  {
+    value: 43200,
+    label: '12 hour'
+  },
+  {
+    value: 86400,
+    label: '1 day'
+  },
+  {
+    value: 604800,
+    label: '1 week'
+  }
+];
