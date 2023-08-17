@@ -44,10 +44,18 @@ const FilePage = () => {
   const [emailInput, setEmailInput] = useState('');
   const [emailChips, setEmailChips] = useState([]);
 
-  const handleFileChange = (event) => {
+  const TextSchema = Yup.object().shape({
+    message: Yup.string().required('Code is required')
+  });
+
+  const handleFileChange = async (event) => {
     const file = event.target.files[0];
     setSelectedFile(file);
-    // Handle the file upload logic here, e.g., send the file to a server.
+    if (file) {
+      const formData = new FormData();
+      formData.append('image', file);
+      console.log(event.target.files[0]);
+    }
   };
 
   const handleDrop = (event) => {
@@ -70,9 +78,7 @@ const FilePage = () => {
     navigator.clipboard.writeText(encryptedUrl);
   };
 
-  const TextSchema = Yup.object().shape({
-    message: Yup.string().required('Code is required')
-  });
+
   const defaultValues = {
     message: '',
     time: 'once'
@@ -88,6 +94,24 @@ const FilePage = () => {
   } = methods;
 
   const onSubmit = async (data) => {
+    // Check if a file is selected
+    if (selectedFile) {
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+
+      // Make the API call to upload the file
+      const response = await fetch('YOUR_API_ENDPOINT', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        console.log('File uploaded successfully');
+      } else {
+        console.error('File upload failed');
+      }
+    }
+
     const password = generateRandomPassword(32);
     try {
       const result = await EncryptText(data.message, data.time, password);
