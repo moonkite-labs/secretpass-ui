@@ -32,6 +32,7 @@ import { CopyOutlined } from '@ant-design/icons';
 
 import upload from '../../assets/Upload.svg';
 
+import { FileEncryption } from '../../services/FileEncryption';
 
 // ==============================|| SAMPLE PAGE ||============================== //
 
@@ -43,25 +44,43 @@ const FilePage = () => {
   const [randomPin, setRandomPin] = useState('');
   const [emailInput, setEmailInput] = useState('');
   const [emailChips, setEmailChips] = useState([]);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState('');
 
   const TextSchema = Yup.object().shape({
     message: Yup.string().required('Code is required')
   });
 
+  // const handleFileChange = async (event) => {
+  //   const file = event.target.files[0];
+  //   setSelectedFile(file);
+  //   if (file) {
+  //     setImagePreviewUrl(URL.createObjectURL(file));
+  //     console.log('Image Preview URL:', URL.createObjectURL(file));
+  //   }
+  // };
+
+  // Inside your handleFileChange function
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
     setSelectedFile(file);
     if (file) {
-      const formData = new FormData();
-      formData.append('image', file);
-      console.log(event.target.files[0]);
+      setImagePreviewUrl(URL.createObjectURL(file));
+      try {
+        const encryptedLink = await FileEncryption(file);
+        setEncryptedUrl(encryptedLink);
+      } catch (error) {
+        console.error('Encryption error:', error);
+      }
     }
   };
+  
 
   const handleDrop = (event) => {
     event.preventDefault();
     const file = event.dataTransfer.files[0];
     setSelectedFile(file);
+    setImagePreviewUrl(URL.createObjectURL(file)); // Create a temporary URL for the image preview
+
     // Handle the file upload logic here, e.g., send the file to a server.
   };
 
@@ -77,7 +96,6 @@ const FilePage = () => {
     setOpen(true);
     navigator.clipboard.writeText(encryptedUrl);
   };
-
 
   const defaultValues = {
     message: '',
@@ -102,7 +120,7 @@ const FilePage = () => {
       // Make the API call to upload the file
       const response = await fetch('YOUR_API_ENDPOINT', {
         method: 'POST',
-        body: formData,
+        body: formData
       });
 
       if (response.ok) {
@@ -161,6 +179,21 @@ const FilePage = () => {
     setEmailChips((chips) => chips.filter((chip) => chip !== chipToDelete));
   };
 
+  const handleClickEncryptButton = async () => {
+    try {
+      if (selectedFile) {
+        const encryptedLink = await FileEncryption(selectedFile);
+        setEncryptedUrl(encryptedLink);
+      } else {
+        console.error('No file selected');
+      }
+    } catch (error) {
+      console.error('Encryption error:', error);
+    }
+  };
+
+  console.log(imagePreviewUrl);
+
   return (
     <>
       <Snackbar
@@ -190,9 +223,10 @@ const FilePage = () => {
                 }}
               >
                 {selectedFile ? (
-                  <div>
-                    <span>{selectedFile.name}</span>
-                  </div>
+                  <>
+                    <img src={imagePreviewUrl} alt="Preview" style={{ maxHeight: '500px', marginBottom: '10px' }} />
+                    <span style={{ alignItems: 'center' }}>{selectedFile.name}</span>
+                  </>
                 ) : (
                   <>
                     <img src={upload} style={{ height: '50px', margin: '10px' }} alt="upload" />
@@ -216,13 +250,14 @@ const FilePage = () => {
               )}
             </div>
           </FormControl>
+
           {!!errors.message && <FormHelperText error sx={{ px: 2 }}></FormHelperText>}
 
           <Stack direction="row" spacing={2} alignItems="center" sx={{ py: 2 }}>
             <RHFRadioGroup name="time" row label="Erase secret after" options={Time_Validity} />
           </Stack>
           <Stack direction="row" spacing={2} alignItems="center" sx={{ py: 2 }}>
-            <Button size="small" variant="contained" sx={{ textTransform: 'capitalize' }}>
+            <Button size="small" variant="contained" sx={{ textTransform: 'capitalize' }} onClick={handleClickEncryptButton}>
               Encrypt
             </Button>
           </Stack>
