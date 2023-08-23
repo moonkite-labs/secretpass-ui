@@ -32,7 +32,7 @@ import { CopyOutlined } from '@ant-design/icons';
 
 import upload from '../../assets/Upload.svg';
 
-import { FileEncryption } from '../../services/FileEncryption';
+import { FileEncryption, SendEmail } from '../../services/FileEncryption';
 
 // ==============================|| SAMPLE PAGE ||============================== //
 
@@ -73,7 +73,6 @@ const FilePage = () => {
       }
     }
   };
-  
 
   const handleDrop = (event) => {
     event.preventDefault();
@@ -191,8 +190,6 @@ const FilePage = () => {
       console.error('Encryption error:', error);
     }
   };
-
-  console.log(imagePreviewUrl);
 
   return (
     <>

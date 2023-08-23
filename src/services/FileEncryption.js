@@ -3,6 +3,7 @@ const { createMessage, encrypt } = require('openpgp');
 // const { post } = require('axios');
 const CryptoJS = require('crypto-js');
 import { Buffer } from 'buffer';
+import axios from 'axios';
 
 // const { createMessage, encrypt, readMessage, decrypt } = require('openpgp');
 
@@ -130,7 +131,6 @@ export const FileEncryption = async (file) => {
     const uid = responseData.uid;
     const link = Buffer.from(uid + '.' + password).toString('base64');
     const encryptedLink = 'http://localhost/f/d/' + link;
-
     return encryptedLink;
   } catch (error) {
     console.error('Error:', error.message);
@@ -163,4 +163,25 @@ const EncryptFile = (file, password) => {
     };
     reader.readAsArrayBuffer(file);
   });
+};
+
+//SEND THE ENCRYPTED LINK TO EMAIL WITH PIN
+export const SendEmail = async (emailData, link) => {
+  const randomPIN = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
+  try {
+    const encryptedLink = CryptoJS.AES.encrypt(link, randomPIN.toString()).toString().replace(/=/g, '');
+    console.log('Encrypted Link: ', 'http://localhost:3000/t/d/p/' + encryptedLink);
+    const payload = {
+      sendTo: emailData[0],
+      secureLink: 'http://localhost:3000/t/d/p/' + encodeURIComponent(encryptedLink)
+    };
+    const response = await axios.post('http://155.4.109.218:7777/email', payload);
+    if (response.data.status === 'success') {
+      console.log('SUCCESSFUL');
+      return { emailSent: true, pin: randomPIN };
+    }
+  } catch (error) {
+    console.error('Encryption failed:', error);
+    throw error;
+  }
 };

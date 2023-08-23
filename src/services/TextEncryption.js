@@ -23,7 +23,6 @@ export const encryptMessage = async (data, password) => {
 };
 
 export const EncryptText = async (message, validity, password) => {
-
   try {
     const encrypted = await encryptMessage(message, password);
 
