@@ -9,7 +9,7 @@ import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-import { validatePin } from 'services/TextDecryption';
+import { validatePin } from 'services/FileDecryption';
 
 import { useParams } from 'react-router-dom'; // Import the useParams hook
 
@@ -50,7 +50,7 @@ const FilePage = () => {
   } = methods;
 
   const onSubmit = async (data) => {
-    const response = validatePin(data, decodedMessage);
+    const response = await validatePin(data, decodedMessage);
     if (response.status == 'success') {
       // navigate(`/t/d/${response.decryptedLink}`);
       console.log(response);

@@ -15,7 +15,7 @@ const newMenu = {
       id: 'file',
       title: 'File',
       type: 'item',
-      url: '/file',
+      url: '/file'
     },
     {
       id: 'chat',

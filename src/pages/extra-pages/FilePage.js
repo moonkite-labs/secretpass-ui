@@ -79,8 +79,6 @@ const FilePage = () => {
     const file = event.dataTransfer.files[0];
     setSelectedFile(file);
     setImagePreviewUrl(URL.createObjectURL(file)); // Create a temporary URL for the image preview
-
-    // Handle the file upload logic here, e.g., send the file to a server.
   };
 
   const handleDragOver = (event) => {

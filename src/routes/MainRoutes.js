@@ -8,8 +8,6 @@ import MainLayout from 'layout/MainLayout';
 // render - sample page
 const TextPage = Loadable(lazy(() => import('pages/extra-pages/TextPage')));
 const FilePage = Loadable(lazy(() => import('pages/extra-pages/FilePage')));
-const OneTimePassword = Loadable(lazy(() => import('pages/extra-pages/OneTimePassword')));
-const SecretMessage = Loadable(lazy(() => import('pages/extra-pages/SecretMessage')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -32,23 +30,27 @@ const MainRoutes = {
     {
       path: 'chat',
       element: <TextPage />
-    },
-    {
-      path: 'otp',
-      element: <OneTimePassword />
-    },
-    {
-      path: 'secret-message',
-      element: <SecretMessage />
-    },
-    {
-      path: 't/d/p/:link',
-      element: <OneTimePassword />
-    },
-    {
-      path: 't/d/:link',
-      element: <SecretMessage />
     }
+    // {
+    //   path: 'otp',
+    //   element: <OneTimePassword />
+    // },
+    // {
+    //   path: 'secret-message',
+    //   element: <SecretMessage />
+    // },
+    // {
+    //   path: 't/d/p/:link',
+    //   element: <OneTimePassword />
+    // },
+    // {
+    //   path: 'f/d/p/:link',
+    //   element: <OneTimePassword />
+    // },
+    // {
+    //   path: 't/d/:link',
+    //   element: <SecretMessage />
+    // }
   ]
 };
 

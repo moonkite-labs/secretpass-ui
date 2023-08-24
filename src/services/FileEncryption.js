@@ -170,10 +170,10 @@ export const SendEmail = async (emailData, link) => {
   const randomPIN = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
   try {
     const encryptedLink = CryptoJS.AES.encrypt(link, randomPIN.toString()).toString().replace(/=/g, '');
-    console.log('Encrypted Link: ', 'http://localhost:3000/t/d/p/' + encryptedLink);
+    console.log('Encrypted Link: ', 'http://localhost:3000/f/d/p/' + encryptedLink);
     const payload = {
       sendTo: emailData[0],
-      secureLink: 'http://localhost:3000/t/d/p/' + encodeURIComponent(encryptedLink)
+      secureLink: 'http://localhost:3000/f/d/p/' + encodeURIComponent(encryptedLink)
     };
     const response = await axios.post('http://155.4.109.218:7777/email', payload);
     if (response.data.status === 'success') {
