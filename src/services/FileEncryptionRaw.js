@@ -86,7 +86,7 @@ const getFileSize = (filePath) => {
         const uid = response.data.uid;
         console.log(`uid: ${response.data.uid}`);
         const link = Buffer.from(uid + '.' + password).toString('base64');
-        console.log(`Link: http://localhost/f/d/${link}`);
+        console.log(`Link: http://localhost:3000/f/d/${link}`);
         // if (randomPIN !== undefined && randomPIN.toString().length === 6) {
         //     console.log('PIN:', randomPIN);
         //     const encryptedLink = CryptoJS.AES.encrypt(link, randomPIN.toString()).toString().replace(/=/g, '');

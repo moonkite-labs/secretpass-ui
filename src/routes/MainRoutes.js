@@ -30,14 +30,10 @@ const MainRoutes = {
     {
       path: 'chat',
       element: <TextPage />
-    }
+    },
     // {
     //   path: 'otp',
     //   element: <OneTimePassword />
-    // },
-    // {
-    //   path: 'secret-message',
-    //   element: <SecretMessage />
     // },
     // {
     //   path: 't/d/p/:link',

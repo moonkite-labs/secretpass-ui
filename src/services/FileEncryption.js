@@ -130,7 +130,7 @@ export const FileEncryption = async (file) => {
     const responseData = await response.json(); // Assuming the API returns JSON
     const uid = responseData.uid;
     const link = Buffer.from(uid + '.' + password).toString('base64');
-    const encryptedLink = 'http://localhost/f/d/' + link;
+    const encryptedLink = 'http://localhost:3000/f/d/' + link;
     return encryptedLink;
   } catch (error) {
     console.error('Error:', error.message);
