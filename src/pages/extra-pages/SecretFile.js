@@ -28,7 +28,7 @@ const SecretFile = () => {
   const [message, setMessage] = useState('');
   useEffect(() => {
     getMessage().then((resolvedMessage) => {
-      console.log(resolvedMessage);
+      // console.log(resolvedMessage);
       setMessage(resolvedMessage);
     });
   }, []);

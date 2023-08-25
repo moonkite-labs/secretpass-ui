@@ -1,5 +1,5 @@
 import axios from 'axios';
-// const { readMessage, decrypt } = require('openpgp');
+const { readMessage, decrypt } = require('openpgp');
 const CryptoJS = require('crypto-js');
 
 export const processLink = async (decodedMessage) => {
@@ -11,18 +11,19 @@ export const processLink = async (decodedMessage) => {
 
     // Download the encrypted file from the API
     const fileUrl = `http://155.4.109.218:7777/file/${uid}`;
-    const { headers, data } = await getFileFromAPI(fileUrl);
-    console.log(headers);
-    const encryptedFileName = headers['x-ext'];
-    console.log('Encrypted File Name:', encryptedFileName);
-    console.log('Password:', password);
+    const { data } = await getFileFromAPI(fileUrl);
+    const binaryData = new Uint8Array(data);
+    // const encryptedFileName = headers['x-ext'];
+    // console.log('Encrypted File Name:', encryptedFileName);
+    // console.log('Password:', password);
 
     // Decrypt and decode the encrypted file name
-    const decryptedFileName = CryptoJS.AES.decrypt(encryptedFileName, password).toString(CryptoJS.enc.Utf8);
-    console.log('Decrypted File Name:', decryptedFileName);
+    // const decryptedFileName = CryptoJS.AES.decrypt(encryptedFileName, password).toString(CryptoJS.enc.Utf8);
+    // console.log('Decrypted File Name:', decryptedFileName);
 
     // Create a message from the encrypted data
-    const encryptedMessage = await readMessage({ binaryMessage: data });
+    const encryptedMessage = await readMessage({ binaryMessage: binaryData });
+    // console.log(encryptedMessage);
 
     // Decrypt the message with the password
     const { data: decrypted } = await decrypt({
@@ -31,12 +32,17 @@ export const processLink = async (decodedMessage) => {
       format: 'binary'
     });
 
+    // console.log(data);
+    console.log(`Decrypted Binary File`);
+
+    console.log(decrypted);
+
     // Save the decrypted data to a file
-    const fileName = `decrypted-${decryptedFileName}`;
-    writeFileSync(fileName, decrypted, 'binary');
-    console.log('PDF file encrypted and decrypted successfully.');
-    const fileSize = getFileSize(fileName);
-    console.log('File Size (KB):', fileSize.kilobytes);
+    // const fileName = `decrypted-${decryptedFileName}`;
+    // writeFileSync(fileName, decrypted, 'binary');
+    // console.log('PDF file encrypted and decrypted successfully.');
+    // const fileSize = getFileSize(fileName);
+    // console.log('File Size (KB):', fileSize.kilobytes);
   } catch (error) {
     console.error('Error:', error.message);
   }
