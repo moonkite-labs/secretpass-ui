@@ -32,9 +32,10 @@ import { CopyOutlined } from '@ant-design/icons';
 
 // Service Import
 import { EncryptText } from 'services/TextEncryption';
-import { SendEmail } from '../../services/EmailService';
+
 import { WEB_TEXT_DECRYPTION_URL } from '../../api/routes';
 import { RandomPasswordGenerator } from '../../utils/PwdGen';
+import { SendEmail } from 'services/EmailService';
 
 // ==============================|| SAMPLE PAGE ||============================== //
 

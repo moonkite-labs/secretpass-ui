@@ -33,8 +33,8 @@ import { CopyOutlined } from '@ant-design/icons';
 import upload from '../../assets/Upload.svg';
 
 import { FileEncryption } from '../../services/FileEncryption';
-import {SendEmail} from "../../services/EmailService";
-import {WEB_FILE_DECRYPTION_URL} from "../../api/routes";
+import { SendEmail } from '../../services/EmailService';
+import { WEB_FILE_DECRYPTION_URL } from '../../api/routes';
 
 // ==============================|| SAMPLE PAGE ||============================== //
 
