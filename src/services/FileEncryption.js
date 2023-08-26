@@ -1,21 +1,12 @@
-import {FILE_API_URL, WEB_FILE_DECRYPTION_URL} from '../api/routes';
-import {Buffer} from 'buffer';
-import {EncodeBase64Url} from "../utils/Base64";
+import { FILE_API_URL, WEB_FILE_DECRYPTION_URL } from '../api/routes';
+import { EncodeBase64Url } from '../utils/Base64';
+import { RandomPasswordGenerator } from '../utils/PwdGen';
 
 const { createMessage, encrypt } = require('openpgp');
 const CryptoJS = require('crypto-js');
 
-const generateRandomPassword = (length) => {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let password = '';
-  for (let i = 0; i < length; i++) {
-    password += characters.charAt(Math.floor(Math.random() * characters.length));
-  }
-  return password;
-};
-
 export const FileEncryption = async (file) => {
-  const password = generateRandomPassword(32);
+  const password = RandomPasswordGenerator(32);
 
   try {
     const encryptedData = await EncryptFile(file, password);

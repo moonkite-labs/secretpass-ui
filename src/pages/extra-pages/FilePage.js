@@ -32,7 +32,9 @@ import { CopyOutlined } from '@ant-design/icons';
 
 import upload from '../../assets/Upload.svg';
 
-import { FileEncryption, SendEmail } from '../../services/FileEncryption';
+import { FileEncryption } from '../../services/FileEncryption';
+import {SendEmail} from "../../services/EmailService";
+import {WEB_FILE_DECRYPTION_URL} from "../../api/routes";
 
 // ==============================|| SAMPLE PAGE ||============================== //
 
@@ -127,10 +129,9 @@ const FilePage = () => {
       }
     }
 
-    const password = generateRandomPassword(32);
     try {
       const result = await EncryptText(data.message, data.time, password);
-      setEncryptedUrl('http://localhost:3000/t/d/' + result.decryptedLink);
+      setEncryptedUrl(`${WEB_FILE_DECRYPTION_URL}${result.decryptedLink}`);
       setBase64Url(result.decryptedLink);
     } catch (error) {
       console.error('Encryption error:', error);

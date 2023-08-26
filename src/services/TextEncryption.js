@@ -4,15 +4,6 @@ import { EncodeBase64Url } from '../utils/Base64';
 
 const { createMessage, encrypt } = require('openpgp');
 
-export const generateRandomPassword = (length) => {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let password = '';
-  for (let i = 0; i < length; i++) {
-    password += characters.charAt(Math.floor(Math.random() * characters.length));
-  }
-  return password;
-};
-
 export const encryptMessage = async (data, password) => {
   try {
     const message = await createMessage({ text: data });

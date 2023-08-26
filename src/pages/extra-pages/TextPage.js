@@ -31,7 +31,10 @@ import MainCard from 'components/MainCard';
 import { CopyOutlined } from '@ant-design/icons';
 
 // Service Import
-import { EncryptText, SendEmail } from 'services/TextEncryption';
+import { EncryptText } from 'services/TextEncryption';
+import { SendEmail } from '../../services/EmailService';
+import { WEB_TEXT_DECRYPTION_URL } from '../../api/routes';
+import { RandomPasswordGenerator } from '../../utils/PwdGen';
 
 // ==============================|| SAMPLE PAGE ||============================== //
 
@@ -61,10 +64,10 @@ const TextPage = () => {
   } = methods;
 
   const onSubmit = async (data) => {
-    const password = generateRandomPassword(32);
+    const password = RandomPasswordGenerator(32);
     try {
       const result = await EncryptText(data.message, data.time, password);
-      setEncryptedUrl('http://localhost:3000/t/d/' + result.decryptedLink);
+      setEncryptedUrl(`${WEB_TEXT_DECRYPTION_URL}${result.decryptedLink}`);
       setBase64Url(result.decryptedLink);
     } catch (error) {
       console.error('Encryption error:', error);
@@ -84,15 +87,6 @@ const TextPage = () => {
     } catch (error) {
       console.error('Encryption error:', error);
     }
-  };
-
-  const generateRandomPassword = (length) => {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let password = '';
-    for (let i = 0; i < length; i++) {
-      password += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-    return password;
   };
 
   const handleLinkCopyUrl = () => {
