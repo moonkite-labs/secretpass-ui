@@ -1,3 +1,5 @@
+import { FILE_API_URL } from '../api/routes';
+
 const { createMessage, encrypt } = require('openpgp');
 // const { readFileSync, statSync } = require('fs');
 // const { post } = require('axios');
@@ -114,7 +116,6 @@ export const FileEncryption = async (file) => {
     const encryptedData = await EncryptFile(file, password);
 
     // Prepare and send the encrypted data to the API
-    const apiUrl = 'http://155.4.109.218:7777/file'; // Replace with the actual API URL
     const encryptedFileName = CryptoJS.AES.encrypt(file.name, password).toString();
     const options = {
       method: 'POST',
@@ -126,7 +127,7 @@ export const FileEncryption = async (file) => {
       body: encryptedData // The encrypted data to be sent
     };
 
-    const response = await fetch(apiUrl, options);
+    const response = await fetch(FILE_API_URL, options);
     const responseData = await response.json(); // Assuming the API returns JSON
     const uid = responseData.uid;
     const link = Buffer.from(uid + '.' + password).toString('base64');

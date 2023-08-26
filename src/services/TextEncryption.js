@@ -1,3 +1,5 @@
+import {TEXT_API_URL} from "../api/routes";
+
 const { createMessage, encrypt } = require('openpgp');
 import axios from 'axios';
 import { Buffer } from 'buffer';
@@ -37,7 +39,7 @@ export const EncryptText = async (message, validity, password) => {
 
     console.log(payload);
 
-    const response = await axios.post('http://155.4.113.208:7777/secret', payload);
+    const response = await axios.post(TEXT_API_URL, payload);
 
     if (response.data.status === 'success') {
       console.log('SUCCESSFUL');

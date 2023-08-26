@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { FILE_API_URL } from '../api/routes';
 const { readMessage, decrypt } = require('openpgp');
 const CryptoJS = require('crypto-js');
 
@@ -8,18 +9,18 @@ export const processLink = async (decodedMessage) => {
     // const base64 = link.substring(link.lastIndexOf('/') + 1);
     const decoded = decodeBase64Url(decodedMessage);
     const [uid, password] = decoded.split('.');
-
+    console.log('url:', FILE_API_URL);
     // Download the encrypted file from the API
-    const fileUrl = `http://155.4.109.218:7777/file/${uid}`;
-    const { data } = await getFileFromAPI(fileUrl);
+    const fileUrl = `${FILE_API_URL}/${uid}`;
+    const { headers, data } = await getFileFromAPI(fileUrl);
     const binaryData = new Uint8Array(data);
-    // const encryptedFileName = headers['x-ext'];
-    // console.log('Encrypted File Name:', encryptedFileName);
-    // console.log('Password:', password);
+    const encryptedFileName = headers['x-ext'];
+    console.log('Encrypted File Name:', encryptedFileName);
+    console.log('Password:', password);
 
     // Decrypt and decode the encrypted file name
-    // const decryptedFileName = CryptoJS.AES.decrypt(encryptedFileName, password).toString(CryptoJS.enc.Utf8);
-    // console.log('Decrypted File Name:', decryptedFileName);
+    const decryptedFileName = CryptoJS.AES.decrypt(encryptedFileName, password).toString(CryptoJS.enc.Utf8);
+    console.log('Decrypted File Name:', decryptedFileName);
 
     // Create a message from the encrypted data
     const encryptedMessage = await readMessage({ binaryMessage: binaryData });
@@ -32,17 +33,25 @@ export const processLink = async (decodedMessage) => {
       format: 'binary'
     });
 
-    // console.log(data);
-    console.log(`Decrypted Binary File`);
+    // Create a Blob with the decrypted data
+    const blob = new Blob([decrypted]);
 
-    console.log(decrypted);
+    // Create a download link for the Blob
+    const downloadLink = document.createElement('a');
+    downloadLink.href = URL.createObjectURL(blob);
+    downloadLink.download = decryptedFileName; // Set the desired filename
+    downloadLink.textContent = 'Download Decrypted File';
+    downloadLink.style.display = 'none';
 
-    // Save the decrypted data to a file
-    // const fileName = `decrypted-${decryptedFileName}`;
-    // writeFileSync(fileName, decrypted, 'binary');
-    // console.log('PDF file encrypted and decrypted successfully.');
-    // const fileSize = getFileSize(fileName);
-    // console.log('File Size (KB):', fileSize.kilobytes);
+    // Append the download link to the DOM
+    document.body.appendChild(downloadLink);
+
+    // Simulate a click on the download link to trigger the download
+    downloadLink.click();
+
+    // Clean up: remove the download link and revoke the Blob URL
+    document.body.removeChild(downloadLink);
+    URL.revokeObjectURL(downloadLink.href);
   } catch (error) {
     console.error('Error:', error.message);
   }

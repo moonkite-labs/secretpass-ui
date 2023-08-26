@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { TEXT_API_URL } from '../api/routes';
 const { readMessage, decrypt } = require('openpgp');
 const CryptoJS = require('crypto-js');
 
@@ -30,7 +31,7 @@ export const processLink = async (link) => {
 const decryptMessage = async (uid, password) => {
   try {
     const format = 'utf8';
-    const { data } = await axios.get('http://155.4.113.208:7777/secret/' + uid);
+    const { data } = await axios.get(`${TEXT_API_URL}/${uid}`);
     const encryptedMsg = JSON.parse(data.secret.message);
     console.log('Encrypted Message: ', encryptedMsg);
     const message = await readMessage({ armoredMessage: encryptedMsg });
