@@ -1,5 +1,4 @@
-
-const BASE_URL = "http://129.151.216.110";
+const BASE_URL = 'http://155.4.109.218';
 const WEB_PORT = 3000;
 const API_PORT = 7777;
 export const WEB_URL = `${BASE_URL}:${WEB_PORT}`;

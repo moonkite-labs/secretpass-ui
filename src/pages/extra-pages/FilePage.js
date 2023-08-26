@@ -32,7 +32,9 @@ import { CopyOutlined } from '@ant-design/icons';
 
 import upload from '../../assets/Upload.svg';
 
-import { FileEncryption, SendEmail } from '../../services/FileEncryption';
+import { FileEncryption } from '../../services/FileEncryption';
+
+import { SendEmail } from '../../services/EmailService';
 
 // ==============================|| SAMPLE PAGE ||============================== //
 

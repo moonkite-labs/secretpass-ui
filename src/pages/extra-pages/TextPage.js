@@ -31,7 +31,9 @@ import MainCard from 'components/MainCard';
 import { CopyOutlined } from '@ant-design/icons';
 
 // Service Import
-import { EncryptText, SendEmail } from 'services/TextEncryption';
+import { EncryptText } from 'services/TextEncryption';
+
+import { SendEmail } from 'services/EmailService';
 
 // ==============================|| SAMPLE PAGE ||============================== //
 
