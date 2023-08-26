@@ -92,6 +92,7 @@ const TextPage = () => {
 
   const handleLinkCopyUrl = () => {
     setOpen(true);
+    console.log('Encrypted URL: ', encryptedUrl);
     navigator.clipboard.writeText(encryptedUrl);
   };
   const handleLinkCopyPin = () => {

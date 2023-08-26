@@ -93,7 +93,7 @@ const FilePage = () => {
 
   const handleLinkCopyUrl = () => {
     setOpen(true);
-    navigator.clipboard.writeText(encryptedUrl);
+    navigator.clipboard.writeText(encryptedUrl)
   };
 
   const defaultValues = {

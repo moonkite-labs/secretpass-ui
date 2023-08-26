@@ -11,14 +11,13 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 import { validatePin } from 'services/TextDecryption';
 
-import { useParams } from 'react-router-dom'; // Import the useParams hook
-
+import { useNavigate, useParams } from 'react-router-dom';
 // ==============================|| SAMPLE PAGE ||============================== //
 
 const FilePage = () => {
   const { link } = useParams();
   const decodedMessage = decodeURIComponent(link);
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const VerifyCodeSchema = Yup.object().shape({
     code1: Yup.string().required('Code is required'),
@@ -51,8 +50,11 @@ const FilePage = () => {
 
   const onSubmit = async (data) => {
     const response = validatePin(data, decodedMessage);
-    if (response.status == 'success') {
-      // navigate(`/t/d/${response.decryptedLink}`);
+    if (response.status === 'success') {
+      console.log('Decrypted Link: ', response.decryptedLink);
+      // const decodedLink = decodeURIComponent(`${response.decryptedLink}`);
+      // console.log('Decoded Link: ', decodedLink);
+      navigate(`/t/d/${response.decryptedLink}`);
       console.log(response);
     }
     // ADD FAILED PIN ENTERED FLOW HERE
