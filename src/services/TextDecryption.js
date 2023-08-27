@@ -16,10 +16,14 @@ export const validatePin = (code, encryptedLink) => {
 
 export const processLink = async (link) => {
   try {
+    console.log('link', link);
     const base64 = link.substring(link.lastIndexOf('/') + 1);
+    console.log('base64', base64);
     const decoded = DecodeBase64Url(base64);
+    console.log('decoded', decoded);
     const [uid, password] = decoded.split('.');
-
+    console.log('uid', uid);
+    console.log('password', password);
     return await decryptMessage(uid, password);
   } catch (error) {
     console.error('Error:', error.message);
