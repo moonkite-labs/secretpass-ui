@@ -1,6 +1,6 @@
-import {FILE_API_URL, WEB_FILE_DECRYPTION_URL} from '../api/routes';
-import {Buffer} from 'buffer';
-import {EncodeBase64Url} from "../utils/Base64";
+import { FILE_API_URL, WEB_FILE_DECRYPTION_URL } from '../api/routes';
+// import { Buffer } from 'buffer';
+import { EncodeBase64Url } from '../utils/Base64';
 
 const { createMessage, encrypt } = require('openpgp');
 const CryptoJS = require('crypto-js');
