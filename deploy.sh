@@ -1,0 +1,1 @@
+docker build -t certtin/creds-ui:latest . && docker push docker.io/certtin/creds-ui:latest
