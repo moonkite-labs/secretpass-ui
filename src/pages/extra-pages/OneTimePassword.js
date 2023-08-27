@@ -8,9 +8,7 @@ import * as Yup from 'yup';
 // form
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-
 import { validatePin } from 'services/TextDecryption';
-
 import { useNavigate, useParams } from 'react-router-dom';
 // ==============================|| SAMPLE PAGE ||============================== //
 
@@ -51,11 +49,7 @@ const FilePage = () => {
   const onSubmit = async (data) => {
     const response = validatePin(data, decodedMessage);
     if (response.status === 'success') {
-      console.log('Decrypted Link: ', response.decryptedLink);
-      // const decodedLink = decodeURIComponent(`${response.decryptedLink}`);
-      // console.log('Decoded Link: ', decodedLink);
       navigate(`/t/d/${response.decryptedLink}`);
-      console.log(response);
     }
     // ADD FAILED PIN ENTERED FLOW HERE
   };
